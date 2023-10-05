@@ -14,7 +14,6 @@ plugins {
 
 group = "io.github.1c-syntax"
 version = gitVersionCalculator.calculateVersion("v")
-var jacocoReport = layout.buildDirectory.file("/reports/jacoco/test/jacoco.xml")
 
 repositories {
     mavenLocal()
@@ -65,7 +64,7 @@ tasks.check {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(File("$jacocoReport"))
+        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
     }
 }
 
@@ -76,14 +75,13 @@ tasks.withType<JavaCompile> {
 }
 
 sonarqube {
-
     properties {
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$jacocoReport")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
     }
 }
 
