@@ -19,14 +19,16 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with Support Configuration.
  */
-package com.github._1c_syntax.supconf;
+package com.github._1c_syntax.bsl.supconf;
 
-import com.github._1c_syntax.bsl.supconf.ParseSupportData;
 import com.github._1c_syntax.bsl.support.SupportVariant;
 import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -104,5 +106,25 @@ class ParseSupportDataTest {
     var result = ParseSupportData.readSimple(path);
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  void readFull() {
+    var path = Path.of("src/test/resources/designer-full-support/Ext/ParentConfigurations.bin");
+    var result = ParseSupportData.readFull(path);
+
+    var supportConf = new SupportConfiguration("Конфигурация", "Разработчик", "1.0.0.0");
+
+    assertThat(result).hasSize(9);
+    var supportConfList = result.values()
+      .stream()
+      .map(Map::keySet)
+      .flatMap(Set::stream)
+      .distinct()
+      .collect(Collectors.toList());
+
+    assertThat(supportConfList)
+      .isNotEmpty()
+      .allMatch(value -> value.compareTo(supportConf) == 0);
   }
 }
