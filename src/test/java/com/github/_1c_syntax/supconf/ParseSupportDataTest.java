@@ -80,6 +80,27 @@ class ParseSupportDataTest {
   }
 
   @Test
+  void readSimpleCorrectSupportClrf() {
+    var path = Path.of("src/test/resources/correct_crlf/Ext/ParentConfigurations.bin");
+    var result = ParseSupportData.readSimple(path);
+
+    assertThat(result)
+      .hasSize(39784)
+      .contains(MapEntry.entry("00035364-b591-4e6a-9219-e27dac18f687", SupportVariant.EDITABLE_SUPPORT_ENABLED))
+    ;
+  }
+
+  @Test
+  void readSimpleCorrectSupportClrf2() {
+    var path = Path.of("src/test/resources/correct_crlf2/Ext/ParentConfigurations.bin");
+    var result = ParseSupportData.readSimple(path);
+
+    assertThat(result)
+      .hasSize(109840)
+      .contains(MapEntry.entry("00009f6c-9712-4a66-a48a-50b59fc617b6", SupportVariant.NOT_EDITABLE))
+    ;
+  }
+  @Test
   void readSimpleIncorrectSupport() {
     var path = Path.of("src/test/resources/incorrect/Ext/ParentConfigurations.bin");
     var result = ParseSupportData.readSimple(path);
