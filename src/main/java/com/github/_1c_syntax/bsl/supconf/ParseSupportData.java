@@ -1,7 +1,7 @@
 /*
  * This file is a part of Support Configuration.
  *
- * Copyright (c) 2019 - 2022
+ * Copyright (c) 2019 - 2023
  * Tymko Oleg <olegtymko@yandex.ru>, Maximov Valery <maximovvalery@gmail.com> and contributors
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public class ParseSupportData {
 
   // взято из https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
-  private static final String REGEX = "(?:,|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))";
+  private static final String REGEX = "(?:,[\\n\\r]*|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))"; // NOSONAR
   private static final Pattern patternSplit = Pattern.compile(REGEX);
 
   private static final int POINT_COUNT_CONFIGURATION = 2;
@@ -96,7 +96,7 @@ public class ParseSupportData {
   public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path path) {
     var rootPath = getRootPathByParentConfigurations(path);
     var supportMap = SUPPORT_MAPS.get(rootPath);
-    if (supportMap == null) {
+    if (supportMap == null && path.toFile().exists()) {
       readFile(path, rootPath);
       supportMap = SUPPORT_MAPS.get(rootPath);
     }
@@ -127,10 +127,6 @@ public class ParseSupportData {
 
   private void readFile(Path pathToBinFile, Path rootPath) {
     LOGGER.debug("Чтения файла поставки ParentConfigurations.bin");
-    if (!pathToBinFile.toFile().exists()) {
-      LOGGER.error(String.format("Файл ParentConfigurations.bin не обнаружен по пути '%s'", pathToBinFile.toFile()));
-      return;
-    }
 
     try {
       var supportMap = read(pathToBinFile);
@@ -140,10 +136,10 @@ public class ParseSupportData {
       supportMap.forEach((String uuid, Map<SupportConfiguration, SupportVariant> supportVariantMap)
         -> result.put(uuid, SupportVariant.max(supportVariantMap.values())));
       SUPPORT_SIMPLE_MAPS.put(rootPath, result);
-    } catch (FileNotFoundException exception) {
-      LOGGER.error("При чтении файла ParentConfigurations.bin произошла ошибка", exception);
-    } catch (NumberFormatException exception) {
-      LOGGER.error("Некорректный файл ParentConfigurations.bin", exception);
+    } catch (FileNotFoundException | NumberFormatException exception) {
+      LOGGER.error(
+        String.format("Ошибка чтения файла %s", pathToBinFile.toFile()));
+      LOGGER.debug("TRACE", exception);
     }
   }
 

@@ -6,10 +6,10 @@ plugins {
     jacoco
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("io.freefair.lombok") version "6.5.0.2"
-    id("io.freefair.javadoc-links") version "6.5.0.2"
-    id("io.freefair.javadoc-utf-8") version "6.5.0.2"
-    id("org.sonarqube") version "3.4.0.2513"
+    id("io.freefair.lombok") version "8.3"
+    id("io.freefair.javadoc-links") version "8.3"
+    id("io.freefair.javadoc-utf-8") version "8.3"
+    id("org.sonarqube") version "4.0.0.2929"
 }
 
 group = "io.github.1c-syntax"
@@ -27,11 +27,11 @@ dependencies {
 
     // прочее
     implementation("commons-io", "commons-io", "2.8.0")
-    implementation("io.github.1c-syntax", "bsl-common-library", "904b9172")
+    api("io.github.1c-syntax", "bsl-common-library", "0.4.0")
 
     // тестирование
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.0")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.7.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.7.0")
     testImplementation("org.assertj", "assertj-core", "3.18.1")
     // логирование
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
@@ -99,6 +99,7 @@ license {
     ext["project"] = "Support Configuration"
     exclude("**/*.properties")
     exclude("**/*.orig")
+    exclude("**/*.xml")
 }
 
 publishing {

@@ -8,10 +8,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java_version: ['11', '17']
+        java_version: ['11', '17', '20']
         os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
-    - uses: actions/checkout@v3.0.2
+    - uses: actions/checkout@v3
       with:
         submodules: true
     - name: Set up JDK ${{ matrix.java_version }}
@@ -23,7 +23,7 @@ jobs:
       run: ./gradlew check --stacktrace
     - name: Archive test results
       if: failure()
-      uses: actions/upload-artifact@v3.1.0
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: junit_report_${{ matrix.os }}_${{ matrix.java_version }}
         path: build/reports/tests/test
