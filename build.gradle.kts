@@ -14,7 +14,7 @@ plugins {
 
 group = "io.github.1c-syntax"
 version = gitVersionCalculator.calculateVersion("v")
-var jacocoReport = layout.buildDirectory.dir("reports/jacoco/test/jacoco.xml")
+var jacocoReport = layout.buildDirectory.file("/reports/jacoco/test/jacoco.xml")
 
 repositories {
     mavenLocal()
