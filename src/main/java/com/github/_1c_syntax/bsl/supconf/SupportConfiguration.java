@@ -29,7 +29,7 @@ import lombok.Value;
  */
 @Value
 @AllArgsConstructor
-public class SupportConfiguration {
+public class SupportConfiguration implements Comparable<SupportConfiguration> {
   /**
    * Название
    */
@@ -44,4 +44,15 @@ public class SupportConfiguration {
    * Версия
    */
   String version;
+
+  @Override
+  public int compareTo(SupportConfiguration o) {
+    if(this.name.compareTo(o.name) != 0) {
+      return this.name.compareTo(o.name);
+    } else if (this.provider.compareTo(o.provider) != 0) {
+      return this.provider.compareTo(o.provider);
+    } else {
+      return this.version.compareTo(o.version);
+    }
+  }
 }
