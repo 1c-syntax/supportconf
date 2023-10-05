@@ -6,14 +6,15 @@ plugins {
     jacoco
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("io.freefair.lombok") version "6.6.1"
-    id("io.freefair.javadoc-links") version "6.6.1"
-    id("io.freefair.javadoc-utf-8") version "6.6.1"
+    id("io.freefair.lombok") version "8.0.1"
+    id("io.freefair.javadoc-links") version "8.0.1"
+    id("io.freefair.javadoc-utf-8") version "8.0.1"
     id("org.sonarqube") version "4.0.0.2929"
 }
 
 group = "io.github.1c-syntax"
 version = gitVersionCalculator.calculateVersion("v")
+var jacocoReport = layout.buildDirectory.dir("reports/jacoco/test/jacoco.xml")
 
 repositories {
     mavenLocal()
@@ -64,7 +65,7 @@ tasks.check {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
+        xml.outputLocation.set(File("$jacocoReport"))
     }
 }
 
@@ -75,13 +76,14 @@ tasks.withType<JavaCompile> {
 }
 
 sonarqube {
+
     properties {
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$jacocoReport")
     }
 }
 
