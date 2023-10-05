@@ -60,7 +60,7 @@ public class SupportConfiguration implements Comparable<SupportConfiguration> {
     }
   }
 
-  private String stripQuotes(String value) {
+  private static String stripQuotes(String value) {
     if(value == null || value.length() < 2) {
       return value;
     }
