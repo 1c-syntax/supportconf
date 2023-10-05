@@ -21,15 +21,13 @@
  */
 package com.github._1c_syntax.bsl.supconf;
 
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 /**
  * Описание конфигурации поставщика
  */
 @Value
-@AllArgsConstructor
-public class SupportConfiguration {
+public class SupportConfiguration implements Comparable<SupportConfiguration> {
   /**
    * Название
    */
@@ -44,4 +42,37 @@ public class SupportConfiguration {
    * Версия
    */
   String version;
+
+  public SupportConfiguration(String name, String provider, String version) {
+    this.name = stripQuotes(name);
+    this.provider = stripQuotes(provider);
+    this.version = stripQuotes(version);
+  }
+
+  @Override
+  public int compareTo(SupportConfiguration o) {
+    if(this.name.compareTo(o.name) != 0) {
+      return this.name.compareTo(o.name);
+    } else if (this.provider.compareTo(o.provider) != 0) {
+      return this.provider.compareTo(o.provider);
+    } else {
+      return this.version.compareTo(o.version);
+    }
+  }
+
+  private static String stripQuotes(String value) {
+    if(value == null || value.length() < 2) {
+      return value;
+    }
+
+    var result = value;
+    if(value.charAt(0) == '\"') {
+      result = value.substring(1);
+    }
+
+    if(result.charAt(result.length() - 1) == '\"') {
+      result = result.substring(0, result.length() - 1);
+    }
+    return result;
+  }
 }
