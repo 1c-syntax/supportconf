@@ -109,6 +109,17 @@ class ParseSupportDataTest {
   }
 
   @Test
+  void readNotFoundFile() {
+    var path = Path.of("fake/ParentConfigurations.bin");
+
+    var resultSimple = ParseSupportData.readSimple(path);
+    assertThat(resultSimple).isEmpty();
+
+    var resultFull = ParseSupportData.readFull(path);
+    assertThat(resultFull).isEmpty();
+  }
+
+  @Test
   void readFull() {
     var path = Path.of("src/test/resources/designer-full-support/Ext/ParentConfigurations.bin");
     var result = ParseSupportData.readFull(path);

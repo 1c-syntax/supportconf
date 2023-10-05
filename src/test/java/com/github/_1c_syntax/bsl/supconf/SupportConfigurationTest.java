@@ -31,11 +31,16 @@ class SupportConfigurationTest {
   void compareTo() {
     var supportConf = new SupportConfiguration("Конфигурация", "Разработчик", "1.0.0.0");
     var supportConfWithQuotes = new SupportConfiguration("Конфигурация\"", "\"Разработчик", "\"1.0.0.0\"");
-    var supportConfWithMoreQuotes = new SupportConfiguration("Конфигурация\"", "\"Разработчик", "\"1.0.0.0\"\"");
+    var supportConfWithMoreQuotes = new SupportConfiguration("Конфигурация\"\"", "\"Разработчик", "\"1.0.0.0\"\"");
+
+    var supportConfV2 = new SupportConfiguration("Конфигурация", "Разработчик", "2.0.0.0");
+    var supportConfDev2 = new SupportConfiguration("Конфигурация", "1", "1.0.0.0");
 
     assertThat(supportConf)
       .isEqualTo(supportConfWithQuotes)
       .isEqualByComparingTo(supportConfWithQuotes)
-      .isNotEqualByComparingTo(supportConfWithMoreQuotes);
+      .isNotEqualByComparingTo(supportConfWithMoreQuotes)
+      .isNotEqualByComparingTo(supportConfV2)
+      .isNotEqualByComparingTo(supportConfDev2);
   }
 }

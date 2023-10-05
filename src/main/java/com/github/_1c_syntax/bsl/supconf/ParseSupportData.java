@@ -96,12 +96,12 @@ public class ParseSupportData {
   public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path path) {
     var rootPath = getRootPathByParentConfigurations(path);
     var supportMap = SUPPORT_MAPS.get(rootPath);
-    if (supportMap == null) {
+    if (supportMap == null && path.toFile().exists()) {
       readFile(path, rootPath);
       supportMap = SUPPORT_MAPS.get(rootPath);
     }
 
-    if (supportMap == null) { // NOSONAR
+    if (supportMap == null) {
       return Collections.emptyMap();
     }
 
@@ -127,10 +127,6 @@ public class ParseSupportData {
 
   private void readFile(Path pathToBinFile, Path rootPath) {
     LOGGER.debug("Чтения файла поставки ParentConfigurations.bin");
-    if (!pathToBinFile.toFile().exists()) {
-      LOGGER.error(String.format("Файл ParentConfigurations.bin не обнаружен по пути '%s'", pathToBinFile.toFile()));
-      return;
-    }
 
     try {
       var supportMap = read(pathToBinFile);
@@ -140,10 +136,10 @@ public class ParseSupportData {
       supportMap.forEach((String uuid, Map<SupportConfiguration, SupportVariant> supportVariantMap)
         -> result.put(uuid, SupportVariant.max(supportVariantMap.values())));
       SUPPORT_SIMPLE_MAPS.put(rootPath, result);
-    } catch (FileNotFoundException exception) {
-      LOGGER.error("При чтении файла ParentConfigurations.bin произошла ошибка", exception);
-    } catch (NumberFormatException exception) {
-      LOGGER.error("Некорректный файл ParentConfigurations.bin", exception);
+    } catch (FileNotFoundException | NumberFormatException exception) {
+      LOGGER.error(
+        String.format("Ошибка чтения файла %s", pathToBinFile.toFile()));
+      LOGGER.debug("TRACE", exception);
     }
   }
 
