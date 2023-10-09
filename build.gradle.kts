@@ -6,7 +6,7 @@ plugins {
     jacoco
     id("org.cadixdev.licenser") version "0.6.1"
     id("com.github.gradle-git-version-calculator") version "1.1.0"
-    id("io.freefair.lombok") version "8.3"
+    id("io.freefair.lombok") version "8.4"
     id("io.freefair.javadoc-links") version "8.3"
     id("io.freefair.javadoc-utf-8") version "8.3"
     id("org.sonarqube") version "4.4.1.3373"
