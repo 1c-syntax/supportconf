@@ -1,7 +1,7 @@
 /*
  * This file is a part of Support Configuration.
  *
- * Copyright (c) 2019 - 2023
+ * Copyright (c) 2019 - 2024
  * Tymko Oleg <olegtymko@yandex.ru>, Maximov Valery <maximovvalery@gmail.com> and contributors
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -21,28 +21,15 @@
  */
 package com.github._1c_syntax.bsl.supconf;
 
-import lombok.Value;
-
 /**
  * Описание конфигурации поставщика
+ *
+ * @param name     Название
+ * @param provider Поставщик
+ * @param version  Версия
  */
-@Value
-public class SupportConfiguration implements Comparable<SupportConfiguration> {
-  /**
-   * Название
-   */
-  String name;
-
-  /**
-   * Поставщик
-   */
-  String provider;
-
-  /**
-   * Версия
-   */
-  String version;
-
+public record SupportConfiguration(String name, String provider,
+                                   String version) implements Comparable<SupportConfiguration> {
   public SupportConfiguration(String name, String provider, String version) {
     this.name = stripQuotes(name);
     this.provider = stripQuotes(provider);
@@ -51,7 +38,7 @@ public class SupportConfiguration implements Comparable<SupportConfiguration> {
 
   @Override
   public int compareTo(SupportConfiguration o) {
-    if(this.name.compareTo(o.name) != 0) {
+    if (this.name.compareTo(o.name) != 0) {
       return this.name.compareTo(o.name);
     } else if (this.provider.compareTo(o.provider) != 0) {
       return this.provider.compareTo(o.provider);
@@ -61,16 +48,16 @@ public class SupportConfiguration implements Comparable<SupportConfiguration> {
   }
 
   private static String stripQuotes(String value) {
-    if(value == null || value.length() < 2) {
+    if (value == null || value.length() < 2) {
       return value;
     }
 
     var result = value;
-    if(value.charAt(0) == '\"') {
+    if (value.charAt(0) == '\"') {
       result = value.substring(1);
     }
 
-    if(result.charAt(result.length() - 1) == '\"') {
+    if (result.charAt(result.length() - 1) == '\"') {
       result = result.substring(0, result.length() - 1);
     }
     return result;
