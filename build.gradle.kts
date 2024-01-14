@@ -5,6 +5,7 @@ plugins {
     `java-library`
     `maven-publish`
     jacoco
+    signing
     id("org.sonarqube") version "4.4.1.3373"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.3"
@@ -120,6 +121,15 @@ license {
     exclude("**/*.properties")
     exclude("**/*.orig")
     exclude("**/*.xml")
+}
+
+signing {
+    val signingInMemoryKey: String? by project      // env.ORG_GRADLE_PROJECT_signingInMemoryKey
+    val signingInMemoryPassword: String? by project // env.ORG_GRADLE_PROJECT_signingInMemoryPassword
+    if (signingInMemoryKey != null) {
+        useInMemoryPgpKeys(signingInMemoryKey, signingInMemoryPassword)
+        sign(publishing.publications)
+    }
 }
 
 publishing {
