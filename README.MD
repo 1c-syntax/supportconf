@@ -9,7 +9,6 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=1c-syntax_supportconf&metric=coverage)](https://sonarcloud.io/dashboard?id=1c-syntax_supportconf)
 
 [![Download](https://img.shields.io/github/release/1c-syntax/supportconf.svg?label=download&style=flat)](https://github.com/1c-syntax/supportconf/releases/latest)
-[![JitPack](https://jitpack.io/v/1c-syntax/supportconf.svg)](https://jitpack.io/#1c-syntax/supportconf)
 [![GitHub Releases](https://img.shields.io/github/downloads/1c-syntax/supportconf/latest/total?style=flat-square)](https://github.com/1c-syntax/mdclasses/supportconf)
 
 Библиотека ранее входила в состав [MDClasses](https://github.com/1c-syntax/mdclasses), но была выделена в самостоятельную в связи с потребностью использования за рамками.
