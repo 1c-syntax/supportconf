@@ -76,7 +76,7 @@ public class ParseSupportData {
     var rootPath = getRootPathByParentConfigurations(path);
     var supportMap = SUPPORT_SIMPLE_MAPS.get(rootPath);
     if (supportMap == null && path.toFile().exists()) {
-      readFile(path, rootPath);
+      readFile(path, rootPath, false);
       supportMap = SUPPORT_SIMPLE_MAPS.get(rootPath);
     }
 
@@ -97,7 +97,7 @@ public class ParseSupportData {
     var rootPath = getRootPathByParentConfigurations(path);
     var supportMap = SUPPORT_MAPS.get(rootPath);
     if (supportMap == null && path.toFile().exists()) {
-      readFile(path, rootPath);
+      readFile(path, rootPath, true);
       supportMap = SUPPORT_MAPS.get(rootPath);
     }
 
@@ -125,17 +125,19 @@ public class ParseSupportData {
     return SupportVariant.NONE;
   }
 
-  private void readFile(Path pathToBinFile, Path rootPath) {
-    LOGGER.debug("Чтения файла поставки ParentConfigurations.bin");
+  private void readFile(Path pathToBinFile, Path rootPath, boolean fullRead) {
+    LOGGER.debug("Чтения файла поставки ParentConfigurations.bin, полное чтение = " + fullRead);
 
     try {
       var supportMap = read(pathToBinFile);
-      SUPPORT_MAPS.put(rootPath, supportMap);
-
-      Map<String, SupportVariant> result = new HashMap<>();
-      supportMap.forEach((String uuid, Map<SupportConfiguration, SupportVariant> supportVariantMap)
-        -> result.put(uuid, SupportVariant.max(supportVariantMap.values())));
-      SUPPORT_SIMPLE_MAPS.put(rootPath, result);
+      if(fullRead) {
+        SUPPORT_MAPS.put(rootPath, supportMap);
+      } else {
+        Map<String, SupportVariant> result = new HashMap<>();
+        supportMap.forEach((String uuid, Map<SupportConfiguration, SupportVariant> supportVariantMap)
+          -> result.put(uuid, SupportVariant.max(supportVariantMap.values())));
+        SUPPORT_SIMPLE_MAPS.put(rootPath, result);
+      }
     } catch (FileNotFoundException | NumberFormatException exception) {
       LOGGER.error(
         String.format("Ошибка чтения файла %s", pathToBinFile.toFile()));
