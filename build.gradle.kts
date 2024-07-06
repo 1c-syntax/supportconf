@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
     jacoco
     signing
-    id("org.sonarqube") version "5.0.0.4638"
+    id("org.sonarqube") version "5.1.0.4882"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.3"
     id("io.freefair.lombok") version "8.6"
