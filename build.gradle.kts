@@ -6,13 +6,13 @@ plugins {
     `maven-publish`
     jacoco
     signing
-    id("org.sonarqube") version "4.4.1.3373"
+    id("org.sonarqube") version "6.0.1.5171"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("me.qoomon.git-versioning") version "6.4.3"
-    id("io.freefair.lombok") version "8.6"
-    id("io.freefair.javadoc-links") version "8.6"
-    id("io.freefair.javadoc-utf-8") version "8.6"
-    id("io.freefair.maven-central.validate-poms") version "8.6"
+    id("me.qoomon.git-versioning") version "6.4.4"
+    id("io.freefair.lombok") version "8.11"
+    id("io.freefair.javadoc-links") version "8.11"
+    id("io.freefair.javadoc-utf-8") version "8.11"
+    id("io.freefair.maven-central.validate-poms") version "8.11"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("io.codearte.nexus-staging") version "0.30.0"
@@ -39,24 +39,23 @@ val isSnapshot = gitVersioning.gitVersionDetails.refType != GitRefType.TAG
 repositories {
     mavenLocal()
     mavenCentral()
-    maven(url = "https://jitpack.io")
 }
 
 dependencies {
     // логирование
-    implementation("org.slf4j", "slf4j-api", "2.0.11")
+    implementation("org.slf4j", "slf4j-api", "2.1.0-alpha1")
 
     // прочее
-    implementation("commons-io", "commons-io", "2.15.1")
-    api("io.github.1c-syntax", "bsl-common-library", "0.5.0")
+    implementation("commons-io", "commons-io", "2.18.0")
+    api("io.github.1c-syntax", "bsl-common-library", "0.7.1")
 
     // тестирование
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.10.1")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.10.1")
-    testImplementation("org.assertj", "assertj-core", "3.25.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
+    testImplementation("org.assertj", "assertj-core", "3.27.0")
+
     // логирование
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-    testImplementation("org.slf4j", "slf4j-log4j12", "2.0.11")
+    testImplementation("org.slf4j", "slf4j-reload4j", "2.1.0-alpha1")
 }
 
 java {
