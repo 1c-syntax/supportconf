@@ -47,7 +47,7 @@ dependencies {
 
     // прочее
     implementation("commons-io", "commons-io", "2.18.0")
-    api("io.github.1c-syntax", "bsl-common-library", "0.7.1")
+    api("io.github.1c-syntax", "bsl-common-library", "0.8.0")
 
     // тестирование
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
@@ -84,7 +84,7 @@ tasks.check {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
+        xml.outputLocation.set(File("${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"))
     }
 }
 
@@ -101,7 +101,7 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
     }
 }
 
