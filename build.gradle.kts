@@ -9,11 +9,11 @@ plugins {
     id("org.sonarqube") version "6.0.1.5171"
     id("org.cadixdev.licenser") version "0.6.1"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.lombok") version "8.11"
-    id("io.freefair.javadoc-links") version "8.11"
-    id("io.freefair.javadoc-utf-8") version "8.11"
-    id("io.freefair.maven-central.validate-poms") version "8.11"
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("io.freefair.lombok") version "8.12.1"
+    id("io.freefair.javadoc-links") version "8.12.1"
+    id("io.freefair.javadoc-utf-8") version "8.12.1"
+    id("io.freefair.maven-central.validate-poms") version "8.12.1"
+    id("com.github.ben-manes.versions") version "0.52.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("io.codearte.nexus-staging") version "0.30.0"
 }
@@ -47,7 +47,7 @@ dependencies {
 
     // прочее
     implementation("commons-io", "commons-io", "2.18.0")
-    api("io.github.1c-syntax", "bsl-common-library", "0.7.1")
+    api("io.github.1c-syntax", "bsl-common-library", "0.8.0")
 
     // тестирование
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
@@ -84,7 +84,7 @@ tasks.check {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(File("$buildDir/reports/jacoco/test/jacoco.xml"))
+        xml.outputLocation.set(File("${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"))
     }
 }
 
@@ -101,7 +101,7 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
     }
 }
 
