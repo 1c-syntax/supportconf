@@ -22,7 +22,6 @@
 package com.github._1c_syntax.bsl.supconf;
 
 import com.github._1c_syntax.bsl.support.SupportVariant;
-import org.assertj.core.data.MapEntry;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -38,16 +37,21 @@ class ParseSupportDataTest {
   void readSimpleEdt() {
     var path = Path.of("src/test/resources/edt/src/Configuration/ParentConfigurations.bin");
     var pathConfiguration = Path.of("src/test/resources/edt/src/Configuration/Configuration.mdo");
-    var result = ParseSupportData.readSimple(path);
+    var result = ParseSupportData.readNoCache(path);
 
-    assertThat(result)
-      .hasSize(9)
-      .contains(MapEntry.entry("3c907782-1b24-440c-b0de-1d62cebde27b", SupportVariant.NOT_EDITABLE))
-      .contains(MapEntry.entry("df133230-33b2-42ac-8b8b-aae801d5007f", SupportVariant.NOT_EDITABLE))
-      .contains(MapEntry.entry("50791551-3395-4b3f-94e4-c4dac0be017f", SupportVariant.EDITABLE_SUPPORT_ENABLED))
-    ;
+    assertThat(result.getSupportVariants()).hasSize(9);
+    assertThat(result.get("3c907782-1b24-440c-b0de-1d62cebde27b")).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(result.get("df133230-33b2-42ac-8b8b-aae801d5007f")).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(result.get("50791551-3395-4b3f-94e4-c4dac0be017f")).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
 
-    var supportVariant = ParseSupportData.getSupportVariantByMDO(
+    // в кеше нет ничего
+    var supportVariant = ParseSupportData.get(
+      "50791551-3395-4b3f-94e4-c4dac0be017f", pathConfiguration);
+    assertThat(supportVariant).isEqualTo(SupportVariant.NONE);
+
+    // в кеше есть
+    ParseSupportData.read(path);
+    supportVariant = ParseSupportData.get(
       "50791551-3395-4b3f-94e4-c4dac0be017f", pathConfiguration);
     assertThat(supportVariant).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
   }
@@ -55,68 +59,66 @@ class ParseSupportDataTest {
   @Test
   void readSimpleDesignerFullSupport() {
     var path = Path.of("src/test/resources/designer-full-support/Ext/ParentConfigurations.bin");
-    var pathConfiguration = Path.of("src/test/support/edt/src/Configuration/Configuration.mdo");
-    var result = ParseSupportData.readSimple(path);
+    var pathConfiguration = Path.of("src/test/resources/designer-full-support/Ext/Configuration/Configuration.xml");
+    var result = ParseSupportData.readNoCache(path);
 
-    assertThat(result)
-      .hasSize(9)
-      .contains(MapEntry.entry("28777e74-89cf-4993-8a0a-a5d2b9a758b9", SupportVariant.NOT_EDITABLE))
-      .contains(MapEntry.entry("2b5d5d5d-3fa5-4448-a8e3-13011eb483cb", SupportVariant.NOT_EDITABLE))
-      .contains(MapEntry.entry("50791551-3395-4b3f-94e4-c4dac0be017f", SupportVariant.NOT_EDITABLE))
-    ;
+    assertThat(result.getSupportVariants()).hasSize(9);
+    assertThat(result.get("28777e74-89cf-4993-8a0a-a5d2b9a758b9")).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(result.get("2b5d5d5d-3fa5-4448-a8e3-13011eb483cb")).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(result.get("50791551-3395-4b3f-94e4-c4dac0be017f")).isEqualTo(SupportVariant.NOT_EDITABLE);
 
-    var supportVariant = ParseSupportData.getSupportVariantByMDO(
-      "50791551-3395-4b3f-94e4-c4dac0be017f", pathConfiguration);
+    // в кеше нет ничего
+    var supportVariant = ParseSupportData.get(
+      "2b5d5d5d-3fa5-4448-a8e3-13011eb483cb", pathConfiguration);
     assertThat(supportVariant).isEqualTo(SupportVariant.NONE);
+
+    // в кеше есть
+    ParseSupportData.read(path);
+    supportVariant = ParseSupportData.get(
+      "2b5d5d5d-3fa5-4448-a8e3-13011eb483cb", pathConfiguration);
+    assertThat(supportVariant).isEqualTo(SupportVariant.NOT_EDITABLE);
   }
 
   @Test
   void readSimpleCorrectSupport() {
     var path = Path.of("src/test/resources/correct/Ext/ParentConfigurations.bin");
-    var result = ParseSupportData.readSimple(path);
+    var result = ParseSupportData.readNoCache(path);
 
-    assertThat(result)
-      .hasSize(39784)
-      .contains(MapEntry.entry("00035364-b591-4e6a-9219-e27dac18f687", SupportVariant.EDITABLE_SUPPORT_ENABLED))
-    ;
+    assertThat(result.getSupportVariants()).hasSize(39784);
+    assertThat(result.get("00035364-b591-4e6a-9219-e27dac18f687")).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
   }
 
   @Test
   void readSimpleCorrectSupportClrf() {
     var path = Path.of("src/test/resources/correct_crlf/Ext/ParentConfigurations.bin");
-    var result = ParseSupportData.readSimple(path);
-
-    assertThat(result)
-      .hasSize(39784)
-      .contains(MapEntry.entry("00035364-b591-4e6a-9219-e27dac18f687", SupportVariant.EDITABLE_SUPPORT_ENABLED))
-    ;
+    var result = ParseSupportData.readNoCache(path);
+    assertThat(result.getSupportVariants()).hasSize(39784);
+    assertThat(result.get("00035364-b591-4e6a-9219-e27dac18f687")).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
 
     path = Path.of("src/test/resources/correct_crlf2/Ext/ParentConfigurations.bin");
-    result = ParseSupportData.readSimple(path);
+    result = ParseSupportData.readNoCache(path);
 
-    assertThat(result)
-      .hasSize(109840)
-      .contains(MapEntry.entry("00009f6c-9712-4a66-a48a-50b59fc617b6", SupportVariant.NOT_EDITABLE))
-    ;
+    assertThat(result.getSupportVariants()).hasSize(109840);
+    assertThat(result.get("00009f6c-9712-4a66-a48a-50b59fc617b6")).isEqualTo(SupportVariant.NOT_EDITABLE);
   }
 
   @Test
   void readSimpleIncorrectSupport() {
     var path = Path.of("src/test/resources/incorrect/Ext/ParentConfigurations.bin");
-    var result = ParseSupportData.readSimple(path);
+    var result = ParseSupportData.readNoCache(path);
 
-    assertThat(result).isEmpty();
+    assertThat(result.getSupportVariants()).isEmpty();
   }
 
   @Test
   void readNotFoundFile() {
     var path = Path.of("fake/ParentConfigurations.bin");
 
-    var resultSimple = ParseSupportData.readSimple(path);
-    assertThat(resultSimple).isEmpty();
+    var result = ParseSupportData.readNoCache(path);
+    assertThat(result.getSupportVariants()).isEmpty();
 
     var resultFull = ParseSupportData.readFull(path);
-    assertThat(resultFull).isEmpty();
+    assertThat(resultFull.getSupportVariants()).isEmpty();
   }
 
   @Test
@@ -126,8 +128,8 @@ class ParseSupportDataTest {
 
     var supportConf = new SupportConfiguration("Конфигурация", "Разработчик", "1.0.0.0");
 
-    assertThat(result).hasSize(9);
-    var supportConfList = result.values()
+    assertThat(result.getSupportVariants()).hasSize(9);
+    var supportConfList = result.getSupportVariants().values()
       .stream()
       .map(Map::keySet)
       .flatMap(Set::stream)

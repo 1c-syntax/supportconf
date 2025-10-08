@@ -26,17 +26,10 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 /**
  * Используется для чтения информации о поддержке из файла ParentConfigurations.bin конфигурации
@@ -44,166 +37,63 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ParseSupportData {
-
-  // взято из https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
-  private static final String REGEX = "(?:,[\\n\\r]*|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))"; // NOSONAR
-  private static final Pattern patternSplit = Pattern.compile(REGEX);
-
-  private static final int POINT_COUNT_CONFIGURATION = 2;
-  private static final int SHIFT_CONFIGURATION_VERSION = 3;
-  private static final int SHIFT_CONFIGURATION_PRODUCER = 4;
-  private static final int SHIFT_CONFIGURATION_NAME = 5;
-  private static final int SHIFT_CONFIGURATION_COUNT_OBJECT = 6;
-  private static final int SHIFT_OBJECT_COUNT = 7;
-  private static final int COUNT_ELEMENT_OBJECT = 4;
-  private static final int CONFIGURATION_SUPPORT = 1;
-  private static final int START_READ_POSITION = 3;
-  private static final int SHIFT_SIZE = 2;
-
-  private static final Map<Path, Map<String, Map<SupportConfiguration, SupportVariant>>> SUPPORT_MAPS
-    = new ConcurrentHashMap<>();
-
-  private static final Map<Path, Map<String, SupportVariant>> SUPPORT_SIMPLE_MAPS
-    = new ConcurrentHashMap<>();
+  private static final Map<Path, SupportData> CACHE = new ConcurrentHashMap<>();
 
   /**
-   * Выполняет чтение информации о поддержке и возвращает упрощенный вариант: UUID / MAX(SupportVariant)
+   * Выполняет чтение сводной информации о поддержке и помещает значение в кеше
    *
-   * @param path Путь к файлу описания поддержки
-   * @return Прочитанная информация
+   * @param pathParentConfigurationBin Путь к файлу конфигурации поставщика
    */
-  public static Map<String, SupportVariant> readSimple(Path path) {
-    var rootPath = getRootPathByParentConfigurations(path);
-    var supportMap = SUPPORT_SIMPLE_MAPS.get(rootPath);
-    if (supportMap == null && path.toFile().exists()) {
-      readFile(path, rootPath, false);
-      supportMap = SUPPORT_SIMPLE_MAPS.get(rootPath);
-    }
-
-    if (supportMap == null) {
-      return Collections.emptyMap();
-    }
-
-    return supportMap;
+  public static void read(Path pathParentConfigurationBin) {
+    CACHE.putIfAbsent(
+      getRootConfiguration(pathParentConfigurationBin),
+      SupportData.create(pathParentConfigurationBin)
+    );
   }
 
   /**
-   * Выполняет чтение информации о поддержке и возвращает весь набор прочитанных данных
+   * Выполняет чтение сводной информации о поддержке без кеширования
    *
-   * @param path Путь к файлу описания поддержки
-   * @return Прочитанная информация
+   * @param pathParentConfigurationBin Путь к файлу конфигурации поставщика
    */
-  public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path path) {
-    var rootPath = getRootPathByParentConfigurations(path);
-    var supportMap = SUPPORT_MAPS.get(rootPath);
-    if (supportMap == null && path.toFile().exists()) {
-      readFile(path, rootPath, true);
-      supportMap = SUPPORT_MAPS.get(rootPath);
-    }
-
-    if (supportMap == null) {
-      return Collections.emptyMap();
-    }
-
-    return supportMap;
+  public static SupportData readNoCache(Path pathParentConfigurationBin) {
+    return SupportData.create(pathParentConfigurationBin);
   }
 
   /**
-   * Возвращает максимальный вариант поддержки для объекта с явным указанием пути.
-   * Используется обычно для объектов, не имеющих собственного файла
+   * Выполняет чтение полной информации о поддержке без кеширования
    *
-   * @param uuid Строка-идентификатор объекта, для которого определяется вариант поддержки
+   * @param pathParentConfigurationBin Путь к файлу конфигурации поставщика
+   */
+  public static FullSupportData readFull(Path pathParentConfigurationBin) {
+    return FullSupportData.create(pathParentConfigurationBin);
+  }
+
+  /**
+   * Возвращает вариант поддержки для объекта с явным указанием пути, на основании которого
+   * находится нужный комплект поддержки в кеше
+   *
+   * @param uid  Строка-идентификатор объекта, для которого определяется вариант поддержки
    * @param path Путь к файлу MDO объекта / родительского объекта
    * @return Вариант поддержки
    */
-  public static SupportVariant getSupportVariantByMDO(String uuid, Path path) {
-    var key = SUPPORT_SIMPLE_MAPS.keySet().stream().filter(path::startsWith).findFirst();
-    if (key.isPresent()) {
-      return SUPPORT_SIMPLE_MAPS.get(key.get()).getOrDefault(uuid, SupportVariant.NONE);
-    }
-
-    return SupportVariant.NONE;
-  }
-
-  private void readFile(Path pathToBinFile, Path rootPath, boolean fullRead) {
-    LOGGER.debug("Чтения файла поставки ParentConfigurations.bin, полное чтение = " + fullRead);
-
-    try {
-      var supportMap = read(pathToBinFile);
-      if(fullRead) {
-        SUPPORT_MAPS.put(rootPath, supportMap);
-      } else {
-        Map<String, SupportVariant> result = new HashMap<>();
-        supportMap.forEach((String uuid, Map<SupportConfiguration, SupportVariant> supportVariantMap)
-          -> result.put(uuid, SupportVariant.max(supportVariantMap.values())));
-        SUPPORT_SIMPLE_MAPS.put(rootPath, result);
+  public static SupportVariant get(String uid, Path path) {
+    var supportData = CACHE.get(path);
+    if (supportData == null) {
+      var value = CACHE.keySet().stream().filter(path::startsWith).findFirst();
+      if (value.isPresent()) {
+        supportData = CACHE.get(value.get());
       }
-    } catch (FileNotFoundException | NumberFormatException exception) {
-      LOGGER.error(
-        String.format("Ошибка чтения файла %s", pathToBinFile.toFile()));
-      LOGGER.debug("TRACE", exception);
+    }
+
+    if (supportData == null) {
+      return SupportVariant.NONE;
+    } else {
+      return supportData.get(uid);
     }
   }
 
-  private Map<String, Map<SupportConfiguration, SupportVariant>> read(Path pathToBinFile) throws FileNotFoundException {
-    Map<String, Map<SupportConfiguration, SupportVariant>> supportMap = new HashMap<>();
-    String[] dataStrings;
-    var fileInputStream = new FileInputStream(pathToBinFile.toFile());
-    try (var scanner = new Scanner(fileInputStream, StandardCharsets.UTF_8)) {
-      dataStrings = scanner.findAll(patternSplit)
-        .map(matchResult -> matchResult.group(1))
-        .toArray(String[]::new);
-    }
-
-    var countConfiguration = Integer.parseInt(dataStrings[POINT_COUNT_CONFIGURATION]);
-    LOGGER.debug("Найдено конфигураций: {}", countConfiguration);
-
-    var startPoint = START_READ_POSITION;
-    for (var numberConfiguration = 1; numberConfiguration <= countConfiguration; numberConfiguration++) {
-      var configurationVersion = dataStrings[startPoint + SHIFT_CONFIGURATION_VERSION];
-      var configurationProducer = dataStrings[startPoint + SHIFT_CONFIGURATION_PRODUCER];
-      var configurationName = dataStrings[startPoint + SHIFT_CONFIGURATION_NAME];
-      var countObjectsConfiguration = Integer.parseInt(dataStrings[startPoint + SHIFT_CONFIGURATION_COUNT_OBJECT]);
-      var configurationSupport = Integer.parseInt(dataStrings[CONFIGURATION_SUPPORT]);
-      var configurationSupportVariant = GeneralSupportVariant.valueOf(configurationSupport);
-
-      var supportConfiguration
-        = new SupportConfiguration(configurationName, configurationProducer, configurationVersion);
-
-      LOGGER.debug(String.format(
-        "Конфигурация: %s Версия: %s Поставщик: %s Количество объектов: %s",
-        configurationName,
-        configurationVersion,
-        configurationProducer,
-        countObjectsConfiguration));
-
-      var startObjectPoint = startPoint + SHIFT_OBJECT_COUNT;
-      for (var numberObject = 0; numberObject < countObjectsConfiguration; numberObject++) {
-        var currentObjectPoint = startObjectPoint + numberObject * COUNT_ELEMENT_OBJECT;
-        // 0 - не редактируется, 1 - с сохранением поддержки, 2 - снято
-        var support = Integer.parseInt(dataStrings[currentObjectPoint]);
-        var guidObject = dataStrings[currentObjectPoint + SHIFT_SIZE];
-        SupportVariant supportVariant;
-        if (configurationSupportVariant == GeneralSupportVariant.LOCKED) {
-          supportVariant = SupportVariant.NOT_EDITABLE;
-        } else {
-          supportVariant = SupportVariant.valueOf(support);
-        }
-
-        Map<SupportConfiguration, SupportVariant> map = supportMap.computeIfAbsent(guidObject, k -> new HashMap<>());
-        map.put(supportConfiguration, supportVariant);
-      }
-
-      startPoint = startObjectPoint + SHIFT_SIZE + countObjectsConfiguration * COUNT_ELEMENT_OBJECT;
-    }
-
-    return supportMap;
-  }
-
-  /**
-   * Получает каталог проекта по файлу поддержки конфигурации
-   */
-  private Path getRootPathByParentConfigurations(Path mdoPath) {
+  private static Path getRootConfiguration(Path mdoPath) {
     return Paths.get(
       FilenameUtils.getFullPathNoEndSeparator(
         FilenameUtils.getFullPathNoEndSeparator(mdoPath.toString())));
