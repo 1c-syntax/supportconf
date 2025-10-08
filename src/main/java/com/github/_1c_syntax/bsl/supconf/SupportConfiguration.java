@@ -48,7 +48,7 @@ public record SupportConfiguration(String name, String provider,
   }
 
   private static String stripQuotes(String value) {
-    if (value == null || value.length() < 2) {
+    if (value.length() < 2) {
       return value;
     }
 
