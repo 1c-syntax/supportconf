@@ -64,8 +64,8 @@ class ParseSupportDataTest {
 
     assertThat(result.getSupportVariants()).hasSize(9);
     assertThat(result.get("28777e74-89cf-4993-8a0a-a5d2b9a758b9")).isEqualTo(SupportVariant.NOT_EDITABLE);
-    assertThat(result.get("2b5d5d5d-3fa5-4448-a8e3-13011eb483cb")).isEqualTo(SupportVariant.NOT_EDITABLE);
-    assertThat(result.get("50791551-3395-4b3f-94e4-c4dac0be017f")).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(result.get("2b5d5d5d-3fa5-4448-a8e3-13011eb483cb")).isEqualTo(SupportVariant.NOT_SUPPORTED);
+    assertThat(result.get("50791551-3395-4b3f-94e4-c4dac0be017f")).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
 
     // в кеше нет ничего
     var supportVariant = ParseSupportData.get(
@@ -76,7 +76,7 @@ class ParseSupportDataTest {
     ParseSupportData.read(path);
     supportVariant = ParseSupportData.get(
       "2b5d5d5d-3fa5-4448-a8e3-13011eb483cb", pathConfiguration);
-    assertThat(supportVariant).isEqualTo(SupportVariant.NOT_EDITABLE);
+    assertThat(supportVariant).isEqualTo(SupportVariant.NOT_SUPPORTED);
   }
 
   @Test

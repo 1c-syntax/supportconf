@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class SupportDataReader {
   private static final Pattern PATTERN_SPLIT =
-    Pattern.compile("(?:,[\\n\\r]*|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))");
+    Pattern.compile("(?:,[\\n\\r]*|\\n|^)(\"(?:(?:\"\")*[^\"]*)*\"|[^\",\\n]*|(?:\\n|$))"); // NOSONAR
 
   private static final int POINT_COUNT_CONFIGURATION = 2;
   private static final int SHIFT_CONFIGURATION_VERSION = 3;
@@ -67,7 +67,7 @@ public class SupportDataReader {
     for (var numberConfiguration = 1; numberConfiguration <= countConfiguration; numberConfiguration++) {
       var countObjectsConfiguration = Integer.parseInt(dataStrings[startPoint + SHIFT_CONFIGURATION_COUNT_OBJECT]);
       var configurationSupportVariant =
-        GeneralSupportVariant.valueOf(Integer.parseInt(dataStrings[CONFIGURATION_SUPPORT]));
+        GeneralSupportVariant.valueOf(Integer.parseInt(dataStrings[startPoint + CONFIGURATION_SUPPORT]));
       printInfo(dataStrings, startPoint);
 
       var startObjectPoint = startPoint + SHIFT_OBJECT_COUNT;
@@ -111,7 +111,7 @@ public class SupportDataReader {
       var configurationName = dataStrings[startPoint + SHIFT_CONFIGURATION_NAME];
       var countObjectsConfiguration = Integer.parseInt(dataStrings[startPoint + SHIFT_CONFIGURATION_COUNT_OBJECT]);
       var configurationSupportVariant =
-        GeneralSupportVariant.valueOf(Integer.parseInt(dataStrings[CONFIGURATION_SUPPORT]));
+        GeneralSupportVariant.valueOf(Integer.parseInt(dataStrings[startPoint + CONFIGURATION_SUPPORT]));
 
       var supportConfiguration
         = new SupportConfiguration(configurationName, configurationProducer, configurationVersion);

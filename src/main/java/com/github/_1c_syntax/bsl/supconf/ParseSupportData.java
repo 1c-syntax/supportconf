@@ -28,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -80,10 +81,11 @@ public class ParseSupportData {
   public static SupportVariant get(String uid, Path path) {
     var supportData = CACHE.get(path);
     if (supportData == null) {
-      var value = CACHE.keySet().stream().filter(path::startsWith).findFirst();
-      if (value.isPresent()) {
-        supportData = CACHE.get(value.get());
-      }
+      supportData = CACHE.entrySet().stream()
+        .filter(entry -> path.startsWith(entry.getKey()))
+        .max(Comparator.comparingInt(entry -> entry.getKey().getNameCount()))
+        .map(Map.Entry::getValue)
+        .orElse(null);
     }
 
     if (supportData == null) {

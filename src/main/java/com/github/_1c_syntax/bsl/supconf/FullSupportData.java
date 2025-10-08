@@ -91,7 +91,11 @@ public final class FullSupportData {
     if (uid.isBlank() || supportVariants.isEmpty()) {
       return Collections.emptyMap();
     }
-    return supportVariants.getOrDefault(uid, Collections.emptyMap());
+    var configurations = supportVariants.get(uid);
+    if (configurations == null || configurations.isEmpty()) {
+      return Collections.emptyMap();
+    }
+    return Map.copyOf(configurations);
   }
 
   /**
