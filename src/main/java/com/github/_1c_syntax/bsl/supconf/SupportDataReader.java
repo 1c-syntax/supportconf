@@ -79,7 +79,7 @@ public class SupportDataReader {
           configurationSupportVariant,
           Integer.parseInt(dataStrings[currentObjectPoint]));
 
-        supportVariants.compute(guidObject, (k, existingValue) -> {
+        supportVariants.compute(guidObject, (String k, SupportVariant existingValue) -> {
           if (existingValue == null) {
             // Ключа нет - вставляем новое значение
             return supportVariant;
@@ -96,7 +96,8 @@ public class SupportDataReader {
     return Collections.unmodifiableMap(supportVariants);
   }
 
-  public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path pathParentConfigurationBin) throws FileNotFoundException {
+  public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path pathParentConfigurationBin)
+    throws FileNotFoundException {
     Map<String, Map<SupportConfiguration, SupportVariant>> supportVariants = new HashMap<>();
     var dataStrings = readDataStrings(pathParentConfigurationBin);
 
@@ -125,7 +126,7 @@ public class SupportDataReader {
         var supportVariant = computeSupportVariant(configurationSupportVariant,
           Integer.parseInt(dataStrings[currentObjectPoint]));
 
-        supportVariants.compute(guidObject, (k, map) -> {
+        supportVariants.compute(guidObject, (String k, Map<SupportConfiguration, SupportVariant> map) -> {
           if (map == null) {
             // Ключа нет - вставляем новое значение
             map = new HashMap<>();
@@ -155,7 +156,7 @@ public class SupportDataReader {
     LOGGER.debug("Reading ParentConfigurations.bin from {}", pathParentConfigurationBin);
 
     String[] dataStrings;
-    FileInputStream fileInputStream = new FileInputStream(pathParentConfigurationBin.toFile());
+    var fileInputStream = new FileInputStream(pathParentConfigurationBin.toFile());
     try (var scanner = new Scanner(fileInputStream, StandardCharsets.UTF_8)) {
       dataStrings = scanner.findAll(PATTERN_SPLIT)
         .map(matchResult -> matchResult.group(1))
