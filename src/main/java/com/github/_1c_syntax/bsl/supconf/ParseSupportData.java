@@ -46,10 +46,8 @@ public class ParseSupportData {
    * @param pathParentConfigurationBin Путь к файлу конфигурации поставщика
    */
   public static void read(Path pathParentConfigurationBin) {
-    CACHE.putIfAbsent(
-      getRootConfiguration(pathParentConfigurationBin),
-      SupportData.create(pathParentConfigurationBin)
-    );
+    var rootPath = getRootConfiguration(pathParentConfigurationBin);
+    CACHE.computeIfAbsent(rootPath, key -> SupportData.create(pathParentConfigurationBin));
   }
 
   /**
