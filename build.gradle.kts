@@ -53,7 +53,7 @@ dependencies {
 
     // прочее
     implementation("commons-io", "commons-io", "2.18.0")
-    api("io.github.1c-syntax", "bsl-common-library", "0.9.0.18-SNAPSHOT")
+    api("io.github.1c-syntax", "bsl-common-library", "0.9.0")
 
     // тестирование
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
