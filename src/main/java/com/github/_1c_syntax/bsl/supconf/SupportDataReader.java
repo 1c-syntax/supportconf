@@ -142,7 +142,8 @@ public class SupportDataReader {
     return Collections.unmodifiableMap(supportVariants);
   }
 
-  private static SupportVariant computeSupportVariant(GeneralSupportVariant configurationSupportVariant, int dataStrings) {
+  private static SupportVariant computeSupportVariant(GeneralSupportVariant configurationSupportVariant,
+                                                      int dataStrings) {
     SupportVariant supportVariant;
     if (configurationSupportVariant == GeneralSupportVariant.LOCKED) {
       supportVariant = SupportVariant.NOT_EDITABLE;

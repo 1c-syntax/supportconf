@@ -52,7 +52,8 @@ public final class FullSupportData {
     this(pathParentConfigurationBin, Collections.emptyMap());
   }
 
-  private FullSupportData(Path pathParentConfigurationBin, Map<String, Map<SupportConfiguration, SupportVariant>> supportVariants) {
+  private FullSupportData(Path pathParentConfigurationBin,
+                          Map<String, Map<SupportConfiguration, SupportVariant>> supportVariants) {
     this.supportVariants = supportVariants;
     this.pathParentConfigurationBin = pathParentConfigurationBin;
   }

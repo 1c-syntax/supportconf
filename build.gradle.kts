@@ -55,6 +55,8 @@ dependencies {
     implementation("commons-io:commons-io:2.21.0")
     implementation("io.github.1c-syntax:bsl-common-library:0.9.0")
 
+    api("org.jspecify:jspecify:1.0.0")
+
     // тестирование
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")

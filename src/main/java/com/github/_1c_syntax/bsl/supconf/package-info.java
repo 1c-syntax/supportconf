@@ -22,10 +22,7 @@
 /**
  * Реализации чтения информации о поставке
  */
-@ParametersAreNonnullByDefault
-@ReturnValuesAreNonnullByDefault
+@NullMarked
 package com.github._1c_syntax.bsl.supconf;
 
-import edu.umd.cs.findbugs.annotations.ReturnValuesAreNonnullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
