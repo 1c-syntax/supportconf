@@ -1,7 +1,7 @@
 /*
  * This file is a part of Support Configuration.
  *
- * Copyright (c) 2019 - 2025
+ * Copyright (c) 2019 - 2026
  * Tymko Oleg <olegtymko@yandex.ru>, Maximov Valery <maximovvalery@gmail.com> and contributors
  *
  * SPDX-License-Identifier: LGPL-3.0-or-later
@@ -142,7 +142,8 @@ public class SupportDataReader {
     return Collections.unmodifiableMap(supportVariants);
   }
 
-  private static SupportVariant computeSupportVariant(GeneralSupportVariant configurationSupportVariant, int dataStrings) {
+  private static SupportVariant computeSupportVariant(GeneralSupportVariant configurationSupportVariant,
+                                                      int dataStrings) {
     SupportVariant supportVariant;
     if (configurationSupportVariant == GeneralSupportVariant.LOCKED) {
       supportVariant = SupportVariant.NOT_EDITABLE;

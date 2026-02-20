@@ -5,16 +5,16 @@ plugins {
     `java-library`
     `maven-publish`
     jacoco
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("cloud.rio.license") version "0.18.0"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.lombok") version "9.0.0"
-    id("io.freefair.javadoc-links") version "9.0.0"
-    id("io.freefair.javadoc-utf-8") version "9.0.0"
-    id("io.freefair.maven-central.validate-poms") version "9.0.0"
+    id("io.freefair.lombok") version "9.2.0"
+    id("io.freefair.javadoc-links") version "9.2.0"
+    id("io.freefair.javadoc-utf-8") version "9.2.0"
+//    id("io.freefair.maven-central.validate-poms") version "9.2.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
-    id("org.jreleaser") version "1.20.0"
-    id("org.sonarqube") version "7.0.0.6105"
+    id("org.jreleaser") version "1.21.0"
+    id("org.sonarqube") version "7.2.2.6593"
 }
 
 group = "io.github.1c-syntax"
@@ -49,24 +49,29 @@ repositories {
 
 dependencies {
     // логирование
-    implementation("org.slf4j", "slf4j-api", "2.1.0-alpha1")
+    implementation("org.slf4j:slf4j-api:2.0.16")
 
     // прочее
-    implementation("commons-io", "commons-io", "2.18.0")
-    api("io.github.1c-syntax", "bsl-common-library", "0.9.0")
+    implementation("commons-io:commons-io:2.21.0")
+    implementation("io.github.1c-syntax:bsl-common-library:0.10.0")
+
+    api("org.jspecify:jspecify:1.0.0")
 
     // тестирование
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.11.4")
-    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.11.4")
-    testImplementation("org.assertj", "assertj-core", "3.27.0")
+    testImplementation(platform("org.junit:junit-bom:6.0.3"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 
     // логирование
-    testImplementation("org.slf4j", "slf4j-reload4j", "2.1.0-alpha1")
+    testImplementation("org.slf4j:slf4j-reload4j:2.0.16")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
     withJavadocJar()
 }
@@ -107,7 +112,8 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
     }
 }
 
@@ -118,14 +124,14 @@ artifacts {
 }
 
 license {
-    header(rootProject.file("license/HEADER.txt"))
-    newLine(false)
+    header = rootProject.file("license/HEADER.txt")
+    skipExistingHeaders = false
+    strictCheck = true
+    mapping("java", "SLASHSTAR_STYLE")
     ext["year"] = "2019 - " + Calendar.getInstance().get(Calendar.YEAR)
     ext["name"] = "Tymko Oleg <olegtymko@yandex.ru>, Maximov Valery <maximovvalery@gmail.com>"
     ext["project"] = "Support Configuration"
-    exclude("**/*.properties")
-    exclude("**/*.orig")
-    exclude("**/*.xml")
+    include("**/*.java")
 }
 
 publishing {
@@ -190,7 +196,8 @@ tasks.register("precommit") {
     description = "Run all precommit tasks"
     group = "Developer tools"
     dependsOn(":test")
-    dependsOn(":updateLicenses")
+    dependsOn(":licenseFormatMain")
+    dependsOn(":licenseFormatTest")
 }
 
 tasks.withType<Javadoc> {
