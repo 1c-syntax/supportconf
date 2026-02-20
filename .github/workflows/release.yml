@@ -16,7 +16,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'adopt'
       - name: Build with Gradle
         run: ./gradlew build
@@ -24,4 +24,5 @@ jobs:
         uses: AButler/upload-release-assets@v3.0
         with:
           files: './build/libs/*.jar'
+
           repo-token: ${{ secrets.GITHUB_TOKEN }}
