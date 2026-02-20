@@ -49,11 +49,11 @@ repositories {
 
 dependencies {
     // логирование
-    implementation("org.slf4j:slf4j-api:2.1.0-alpha1")
+    implementation("org.slf4j:slf4j-api:2.0.16")
 
     // прочее
     implementation("commons-io:commons-io:2.21.0")
-    implementation("io.github.1c-syntax:bsl-common-library:0.9.0")
+    implementation("io.github.1c-syntax:bsl-common-library:0.10.0")
 
     api("org.jspecify:jspecify:1.0.0")
 
@@ -63,15 +63,15 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // логирование
-    testImplementation("org.slf4j:slf4j-reload4j:2.1.0-alpha1")
+    testImplementation("org.slf4j:slf4j-reload4j:2.0.16")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
     withJavadocJar()
 }
