@@ -138,6 +138,75 @@ class ParseSupportDataTest {
 
     assertThat(supportConfList)
       .isNotEmpty()
-      .allMatch(value -> value.compareTo(supportConf) == 0);
+      .allMatch(value -> value.compareTo(new SupportConfiguration("Конфигурация", "Разработчик", "1.0.0.0")) == 0);
+  }
+
+  @Test
+  void readFullDistr() {
+    var path = Path.of("src/test/resources/conf_dist/full_mod/Configuration.distr");
+    var result = ParseSupportData.readFull(path);
+
+    assertThat(result.getSupportVariants()).hasSize(7936);
+
+    var supportConfList = result.getSupportVariants().values()
+      .stream()
+      .map(Map::keySet)
+      .flatMap(Set::stream)
+      .distinct()
+      .collect(Collectors.toList());
+
+    assertThat(supportConfList)
+      .isNotEmpty()
+      .allMatch(value -> value.name().equals("БиблиотекаСтандартныхПодсистем"));
+  }
+
+  @Test
+  void readDistrNone() {
+    var path = Path.of("src/test/resources/conf_dist/none/Configuration.distr");
+    var result = ParseSupportData.readNoCache(path);
+
+    assertThat(result.getSupportVariants()).isEmpty();
+  }
+
+  @Test
+  void readDistrFull() {
+    var path = Path.of("src/test/resources/conf_dist/full/Configuration.distr");
+    var result = ParseSupportData.readNoCache(path);
+
+    assertThat(result.getSupportVariants()).hasSize(8119);
+    var variant = result.get("d95fcb37-fc65-466d-93e2-489f41683276");
+    assertThat(variant).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
+  }
+
+  @Test
+  void readDistrFullMod() {
+    var path = Path.of("src/test/resources/conf_dist/full_mod/Configuration.distr");
+    var result = ParseSupportData.readNoCache(path);
+
+    assertThat(result.getSupportVariants()).hasSize(7936);
+    var variant = result.get("d0d2997c-9781-4aed-bec2-402fa7a48334");
+    assertThat(variant).isEqualTo(SupportVariant.NOT_EDITABLE);
+  }
+
+  @Test
+  void readDistrAnyMod() {
+    var path = Path.of("src/test/resources/conf_dist/any_mod/Configuration.distr");
+    var result = ParseSupportData.readNoCache(path);
+
+    assertThat(result.getSupportVariants()).hasSize(7936);
+    var variant = result.get("d0d2997c-9781-4aed-bec2-402fa7a48334");
+    assertThat(variant).isEqualTo(SupportVariant.NOT_EDITABLE);
+  }
+
+  @Test
+  void readDistrVsBin() {
+    var binPath = Path.of("src/test/resources/conf_dist/full/ParentConfigurations.bin");
+    var binResult = ParseSupportData.readNoCache(binPath);
+
+    for (var guid : binResult.getSupportVariants().keySet()) {
+      assertThat(binResult.get(guid))
+        .as("Variant for GUID should be NOT_EDITABLE", guid)
+        .isEqualTo(SupportVariant.NOT_EDITABLE);
+    }
   }
 }

@@ -33,8 +33,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Используется для чтения информации о поддержке из файла ParentConfigurations.bin конфигурации
- */
+  * Используется для чтения информации о поддержке из файлов:
+  * <ul>
+  *   <li>ParentConfigurations.bin — формат конфигуратора и ранних версий EDT</li>
+  *   <li>Configuration.distr — новый формат EDT (XML)</li>
+  * </ul>
+  */
 @Slf4j
 @UtilityClass
 public class ParseSupportData {
