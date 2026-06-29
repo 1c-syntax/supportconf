@@ -13,8 +13,8 @@ plugins {
 //    id("io.freefair.maven-central.validate-poms") version "9.2.0"
     id("com.github.ben-manes.versions") version "0.53.0"
     id("ru.vyarus.pom") version "3.0.0"
-    id("org.jreleaser") version "1.21.0"
-    id("org.sonarqube") version "7.2.2.6593"
+    id("org.jreleaser") version "1.25.0"
+    id("org.sonarqube") version "7.2.3.7755"
 }
 
 group = "io.github.1c-syntax"
@@ -49,7 +49,7 @@ repositories {
 
 dependencies {
     // логирование
-    implementation("org.slf4j:slf4j-api:2.0.16")
+    implementation("org.slf4j:slf4j-api:2.0.17")
 
     // прочее
     implementation("commons-io:commons-io:2.21.0")
@@ -63,7 +63,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // логирование
-    testImplementation("org.slf4j:slf4j-reload4j:2.0.16")
+    testImplementation("org.slf4j:slf4j-reload4j:2.0.17")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

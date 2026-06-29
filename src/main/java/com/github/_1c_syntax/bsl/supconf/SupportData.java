@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileNotFoundException;
+import java.util.Locale;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
@@ -66,7 +67,11 @@ public final class SupportData {
   public static SupportData create(Path pathParentConfigurationBin) {
     Map<String, SupportVariant> supportVariants;
     try {
-      supportVariants = SupportDataReader.read(pathParentConfigurationBin);
+      if (isDistFile(pathParentConfigurationBin)) {
+        supportVariants = DistrSupportReader.read(pathParentConfigurationBin);
+      } else {
+        supportVariants = SupportDataReader.read(pathParentConfigurationBin);
+      }
     } catch (NumberFormatException | FileNotFoundException exception) {
       LOGGER.error("Ошибка чтения файла {}", pathParentConfigurationBin);
       LOGGER.debug("TRACE", exception);
@@ -92,5 +97,11 @@ public final class SupportData {
       return SupportVariant.NONE;
     }
     return supportVariants.getOrDefault(uid, SupportVariant.NONE);
+  }
+
+  private static boolean isDistFile(Path path) {
+    var fileName = path.getFileName().toString().toLowerCase(Locale.ROOT);
+    return fileName.equals("configuration.distr")
+      || fileName.endsWith(".distr"); // вдруг переименуют
   }
 }
