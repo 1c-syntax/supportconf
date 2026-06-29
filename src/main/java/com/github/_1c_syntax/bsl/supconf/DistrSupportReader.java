@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.FileInputStream;
@@ -72,7 +73,12 @@ public class DistrSupportReader {
 
     try (InputStream is = new FileInputStream(pathDistFile.toFile())) {
       var factory = SAXParserFactory.newInstance();
+      factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
       factory.setNamespaceAware(true);
+      setFeatureSilently(factory, "http://apache.org/xml/features/disallow-doctype-decl", true);
+      setFeatureSilently(factory, "http://xml.org/sax/features/external-general-entities", false);
+      setFeatureSilently(factory, "http://xml.org/sax/features/external-parameter-entities", false);
+      setFeatureSilently(factory, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
       var saxParser = factory.newSAXParser();
       saxParser.parse(new InputSource(is), handler);
     } catch (SAXException | IOException | IllegalArgumentException | ParserConfigurationException e) {
@@ -80,6 +86,15 @@ public class DistrSupportReader {
       LOGGER.debug("TRACE", e);
       handler.supportVariants.clear();
       handler.fullVariants.clear();
+    }
+  }
+
+  private static void setFeatureSilently(SAXParserFactory factory, String name, boolean value) {
+    try {
+      factory.setFeature(name, value);
+    } catch (ParserConfigurationException | SAXException ignored) {
+      // Some parsers don't support non-standard features;
+      // FEATURE_SECURE_PROCESSING provides the core protection.
     }
   }
 

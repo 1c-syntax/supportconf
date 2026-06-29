@@ -201,12 +201,26 @@ class ParseSupportDataTest {
   @Test
   void readDistrVsBin() {
     var binPath = Path.of("src/test/resources/conf_dist/full/ParentConfigurations.bin");
-    var binResult = ParseSupportData.readNoCache(binPath);
+    var distrPath = Path.of("src/test/resources/conf_dist/generated/Configuration.distr");
 
-    for (var guid : binResult.getSupportVariants().keySet()) {
-      assertThat(binResult.get(guid))
-        .as("Variant for GUID should be NOT_EDITABLE", guid)
-        .isEqualTo(SupportVariant.NOT_EDITABLE);
+    var binResult = ParseSupportData.readNoCache(binPath);
+    var distrResult = ParseSupportData.readNoCache(distrPath);
+
+    var allGuids = binResult.getSupportVariants().keySet();
+
+    assertThat(binResult.getSupportVariants()).hasSameSizeAs(distrResult.getSupportVariants());
+    assertThat(allGuids).hasSameSizeAs(distrResult.getSupportVariants().keySet());
+
+    for (var guid : allGuids) {
+      assertThat(distrResult.getSupportVariants().containsKey(guid))
+        .as("GUID {} should be present in distr result", guid);
+
+      var binVariant = binResult.get(guid);
+      var distrVariant = distrResult.get(guid);
+
+      assertThat(distrVariant)
+        .as("Variant conflict for GUID: %s (bin=%s vs distr=%s)", guid, binVariant, distrVariant)
+        .isEqualTo(binVariant);
     }
   }
 }
