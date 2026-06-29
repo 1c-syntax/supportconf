@@ -212,8 +212,7 @@ class ParseSupportDataTest {
     assertThat(allGuids).hasSameSizeAs(distrResult.getSupportVariants().keySet());
 
     for (var guid : allGuids) {
-      assertThat(distrResult.getSupportVariants().containsKey(guid))
-        .as("GUID {} should be present in distr result", guid);
+      assertThat(distrResult.getSupportVariants().containsKey(guid)).isTrue();
 
       var binVariant = binResult.get(guid);
       var distrVariant = distrResult.get(guid);
