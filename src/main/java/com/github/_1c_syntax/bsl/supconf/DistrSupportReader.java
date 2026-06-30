@@ -109,7 +109,6 @@ public class DistrSupportReader {
 
     private String userId = "";
     private boolean used;
-    private boolean hasUserMode;
     private boolean inItems;
     private boolean inParentConfigurationInfos;
 
@@ -125,7 +124,6 @@ public class DistrSupportReader {
       if (inParentConfigurationInfos && "items".equals(localName)) {
         inItems = true;
         userId = attributes.getValue("userId");
-        hasUserMode = (attributes.getIndex("userMode") != -1);
         var usedAttr = attributes.getValue("used");
         used = "true".equalsIgnoreCase(usedAttr);
       }
@@ -163,9 +161,6 @@ public class DistrSupportReader {
     private SupportVariant computeVariant() {
       if (!used) {
         return SupportVariant.NOT_SUPPORTED;
-      }
-      if (hasUserMode) {
-        return SupportVariant.EDITABLE_SUPPORT_ENABLED;
       }
       return SupportVariant.NOT_EDITABLE;
     }

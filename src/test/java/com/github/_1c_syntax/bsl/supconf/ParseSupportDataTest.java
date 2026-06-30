@@ -175,7 +175,7 @@ class ParseSupportDataTest {
 
     assertThat(result.getSupportVariants()).hasSize(8119);
     var variant = result.get("d95fcb37-fc65-466d-93e2-489f41683276");
-    assertThat(variant).isEqualTo(SupportVariant.EDITABLE_SUPPORT_ENABLED);
+    assertThat(variant).isEqualTo(SupportVariant.NOT_EDITABLE);
   }
 
   @Test
