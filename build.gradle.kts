@@ -7,14 +7,14 @@ plugins {
     jacoco
     id("cloud.rio.license") version "0.18.0"
     id("me.qoomon.git-versioning") version "6.4.4"
-    id("io.freefair.lombok") version "9.2.0"
-    id("io.freefair.javadoc-links") version "9.2.0"
-    id("io.freefair.javadoc-utf-8") version "9.2.0"
+    id("io.freefair.lombok") version "9.5.0"
+    id("io.freefair.javadoc-links") version "9.5.0"
+    id("io.freefair.javadoc-utf-8") version "9.5.0"
 //    id("io.freefair.maven-central.validate-poms") version "9.2.0"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.25.0"
-    id("org.sonarqube") version "7.2.3.7755"
+    id("org.sonarqube") version "7.3.1.8318"
 }
 
 group = "io.github.1c-syntax"
@@ -49,21 +49,21 @@ repositories {
 
 dependencies {
     // логирование
-    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-api:2.0.18")
 
     // прочее
-    implementation("commons-io:commons-io:2.21.0")
-    implementation("io.github.1c-syntax:bsl-common-library:0.10.0")
+    implementation("commons-io:commons-io:2.22.0")
+    implementation("io.github.1c-syntax:bsl-common-library:0.12.1")
 
     api("org.jspecify:jspecify:1.0.0")
 
     // тестирование
-    testImplementation(platform("org.junit:junit-bom:6.0.3"))
+    testImplementation(platform("org.junit:junit-bom:6.1.1"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // логирование
-    testImplementation("org.slf4j:slf4j-reload4j:2.0.17")
+    testImplementation("org.slf4j:slf4j-reload4j:2.0.18")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
