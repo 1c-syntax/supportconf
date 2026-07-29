@@ -53,7 +53,7 @@ dependencies {
 
     // прочее
     implementation("commons-io:commons-io:2.22.0")
-    implementation("io.github.1c-syntax:bsl-common-library:0.12.1")
+    implementation("io.github.1c-syntax:bsl-common-library:0.12.3")
 
     api("org.jspecify:jspecify:1.0.0")
 
