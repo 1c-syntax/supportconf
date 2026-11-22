@@ -1,5 +1,5 @@
-import java.util.Calendar
 import org.jreleaser.model.Active.*
+import java.util.*
 
 plugins {
     `java-library`
@@ -11,10 +11,10 @@ plugins {
     id("io.freefair.javadoc-links") version "9.5.0"
     id("io.freefair.javadoc-utf-8") version "9.5.0"
 //    id("io.freefair.maven-central.validate-poms") version "9.2.0"
-    id("com.github.ben-manes.versions") version "0.54.0"
+    id("com.github.ben-manes.versions") version "0.61.0"
     id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.25.0"
-    id("org.sonarqube") version "7.3.1.8318"
+    id("org.sonarqube") version "7.4.0.8496"
 }
 
 group = "io.github.1c-syntax"
@@ -22,22 +22,22 @@ gitVersioning.apply {
     refs {
         describeTagFirstParent = false
         tag("v(?<tagVersion>[0-9].*)") {
-            version = "\${ref.tagVersion}\${dirty}"
+            version = $$"${ref.tagVersion}${dirty}"
         }
 
         branch("develop") {
-            version = "\${describe.tag.version.major}." +
-                    "\${describe.tag.version.minor.next}.0." +
-                    "\${describe.distance}-SNAPSHOT\${dirty}"
+            version = $$"${describe.tag.version.major}." +
+                    $$"${describe.tag.version.minor.next}.0." +
+                    $$"${describe.distance}-SNAPSHOT${dirty}"
         }
 
         branch(".+") {
-            version = "\${ref}-\${commit.short}\${dirty}"
+            version = $$"${ref}-${commit.short}${dirty}"
         }
     }
 
     rev {
-        version = "\${commit.short}\${dirty}"
+        version = $$"${commit.short}${dirty}"
     }
 }
 
@@ -53,12 +53,12 @@ dependencies {
 
     // прочее
     implementation("commons-io:commons-io:2.22.0")
-    implementation("io.github.1c-syntax:bsl-common-library:0.12.1")
+    implementation("io.github.1c-syntax:bsl-common-library:0.13.0")
 
-    api("org.jspecify:jspecify:1.0.0")
+    api("org.jspecify:jspecify:1.0.1")
 
     // тестирование
-    testImplementation(platform("org.junit:junit-bom:6.1.1"))
+    testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.assertj:assertj-core:3.27.7")
 
@@ -112,8 +112,10 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths",
-            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"
+        )
     }
 }
 
@@ -208,7 +210,9 @@ tasks.withType<Javadoc> {
 jreleaser {
     signing {
         active = ALWAYS
-        armored = true
+        pgp {
+            armored = true
+        }
     }
     deploy {
         maven {

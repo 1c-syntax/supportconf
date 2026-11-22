@@ -33,7 +33,6 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -51,7 +50,7 @@ public class DistrSupportReader {
   /**
    * Читает данные настроек поставки из XML-файла.
    */
-  public static Map<String, SupportVariant> read(Path pathDistFile) throws FileNotFoundException {
+  public static Map<String, SupportVariant> read(Path pathDistFile) {
     var handler = new DistrSupportHandler();
     executeParsing(pathDistFile, handler);
     return Collections.unmodifiableMap(handler.supportVariants);
@@ -60,8 +59,7 @@ public class DistrSupportReader {
   /**
    * Читает полные данные настроек поставки из XML-файла.
    */
-  public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path pathDistFile)
-    throws FileNotFoundException {
+  public static Map<String, Map<SupportConfiguration, SupportVariant>> readFull(Path pathDistFile) {
 
     var handler = new DistrSupportHandler();
     executeParsing(pathDistFile, handler);
