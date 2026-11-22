@@ -1,5 +1,5 @@
-import java.util.Calendar
 import org.jreleaser.model.Active.*
+import java.util.*
 
 plugins {
     `java-library`
@@ -22,22 +22,22 @@ gitVersioning.apply {
     refs {
         describeTagFirstParent = false
         tag("v(?<tagVersion>[0-9].*)") {
-            version = "\${ref.tagVersion}\${dirty}"
+            version = $$"${ref.tagVersion}${dirty}"
         }
 
         branch("develop") {
-            version = "\${describe.tag.version.major}." +
-                    "\${describe.tag.version.minor.next}.0." +
-                    "\${describe.distance}-SNAPSHOT\${dirty}"
+            version = $$"${describe.tag.version.major}." +
+                    $$"${describe.tag.version.minor.next}.0." +
+                    $$"${describe.distance}-SNAPSHOT${dirty}"
         }
 
         branch(".+") {
-            version = "\${ref}-\${commit.short}\${dirty}"
+            version = $$"${ref}-${commit.short}${dirty}"
         }
     }
 
     rev {
-        version = "\${commit.short}\${dirty}"
+        version = $$"${commit.short}${dirty}"
     }
 }
 
@@ -53,7 +53,7 @@ dependencies {
 
     // прочее
     implementation("commons-io:commons-io:2.22.0")
-    implementation("io.github.1c-syntax:bsl-common-library:0.12.5")
+    implementation("io.github.1c-syntax:bsl-common-library:0.13.0")
 
     api("org.jspecify:jspecify:1.0.1")
 
@@ -112,8 +112,10 @@ sonarqube {
         property("sonar.organization", "1c-syntax")
         property("sonar.projectKey", "1c-syntax_supportconf")
         property("sonar.projectName", "Support Configuration")
-        property("sonar.coverage.jacoco.xmlReportPaths",
-            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacoco.xml"
+        )
     }
 }
 
@@ -208,7 +210,9 @@ tasks.withType<Javadoc> {
 jreleaser {
     signing {
         active = ALWAYS
-        armored = true
+        pgp {
+            armored = true
+        }
     }
     deploy {
         maven {
