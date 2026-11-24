@@ -63,7 +63,7 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.27.7")
 
     // логирование
-    testImplementation("org.slf4j:slf4j-reload4j:2.0.18")
+    testImplementation("org.slf4j:slf4j-reload4j:2.0.20")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
